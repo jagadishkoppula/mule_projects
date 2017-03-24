@@ -135,13 +135,7 @@
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.mule.modules/mule-module-json -->
-<dependency>
-    <groupId>org.mule.modules</groupId>
-    <artifactId>mule-module-json</artifactId>
-    <version>4.0.0-M4</version>
-</dependency>
-		
-		
+	
 		
 		<dependency>
         	<groupId>com.mulesoft.muleesb</groupId>
