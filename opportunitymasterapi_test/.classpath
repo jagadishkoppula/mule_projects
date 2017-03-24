@@ -39,13 +39,13 @@
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/mule/tools/devkit/mule-devkit-shade/3.8.1/mule-devkit-shade-3.8.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/mulesoft/modules/mule-interceptor-module/3.8.0/mule-interceptor-module-3.8.0.jar">
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/modules/mule-interceptor-module/3.8.1/mule-interceptor-module-3.8.1.jar">
     <attributes>
       <attribute value="test" name="org.mule.tooling.scope"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/mule/modules/mule-module-sfdc/7.1.2/mule-module-sfdc-7.1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/mulesoft/munit/mule-munit-support/3.8.0/mule-munit-support-3.8.0.jar">
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/munit/mule-munit-support/3.8.1/mule-munit-support-3.8.1.jar">
     <attributes>
       <attribute value="test" name="org.mule.tooling.scope"/>
     </attributes>
