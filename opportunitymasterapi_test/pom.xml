@@ -229,6 +229,13 @@
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
+		        <!-- https://mvnrepository.com/artifact/org.mule.modules/mule-module-db -->
+		<dependency>
+		    <groupId>org.mule.modules</groupId>
+		    <artifactId>mule-module-db</artifactId>
+		    <version>4.0.0-M4</version>
+		</dependency>
+		        
     </dependencies>
 
 	<repositories>
