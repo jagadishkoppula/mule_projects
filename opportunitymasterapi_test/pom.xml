@@ -201,12 +201,13 @@
 			<version>${mule.version}</version>
 			<scope>test</scope>
 		</dependency>
-	<dependency>
-            <groupId>com.mulesoft.munit</groupId>
-            <artifactId>mule-munit-support</artifactId>
-            <version>${mule.munit.support.version}</version>
-            <scope>test</scope>
-        </dependency>
+				<!-- https://mvnrepository.com/artifact/com.mulesoft.munit/mule-munit-support -->
+		<dependency>
+		    <groupId>com.mulesoft.munit</groupId>
+		    <artifactId>mule-munit-support</artifactId>
+		    <version>3.8.1</version>
+		</dependency>
+	
     <dependency>
             <groupId>com.mulesoft.munit</groupId>
             <artifactId>munit-runner</artifactId>
