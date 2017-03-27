@@ -27,8 +27,8 @@
 		    <configuration>
 		        <deploymentType>cloudhub</deploymentType>
 		        <muleVersion>3.8.1</muleVersion>               <!-- This is the runtime version as it appears on the CloudHub interface -->
-		        <username>jagadishrao95</username>
-		        <password>J@gu1r1630</password>
+		        <username>jagadishkoppula95</username>
+		        <password>J@gadish95</password>
 		        <environment>Production</environment>
 		    </configuration>
 		    <executions>
