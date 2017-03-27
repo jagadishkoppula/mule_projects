@@ -37,7 +37,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
             </processor-chain>
         </scatter-gather>
         <dw:transform-message metadata:id="9fc8d3c1-e0e9-4c19-a103-b9982e8d4333" doc:name="Transform Message">
-            <dw:input-payload mimeType="application/json"/>
+            <dw:input-payload mimeType="application/json" doc:sample="sample_data\list_json_1.json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -47,6 +47,7 @@ payload]]></dw:set-payload>
     <flow name="get:/CustomerProject/{location}:OpportunityMasterAPI-config">
         <db:select config-ref="MySQL_Configuration" doc:name="Database">
             <db:dynamic-query><![CDATA[SELECT * FROM customer WHERE Location = '#[message.inboundProperties.'http.uri.params'.location]';]]></db:dynamic-query>
+
         </db:select>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <dw:transform-message metadata:id="5e3db811-57f5-43c5-beea-8704ad1ca2fd" doc:name="Transform Message">
@@ -94,6 +95,7 @@ payload map ((payload01 , indexOfPayload01) -> {
     <flow name="get:/OpportunityByLocation/{eventlocation}:OpportunityMasterAPI-config">
         <db:select config-ref="MySQL_Configuration" doc:name="Database">
             <db:dynamic-query><![CDATA[select * from visitordetails where Location = '#[message.inboundProperties.'http.uri.params'.eventlocation]';]]></db:dynamic-query>
+
         </db:select>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <flow-ref name="Transform_message_flow" doc:name="Transform_message_flow"/>
@@ -103,6 +105,7 @@ payload map ((payload01 , indexOfPayload01) -> {
     <flow name="get:/OpportunityByModel/{model}:OpportunityMasterAPI-config">
         <db:select config-ref="MySQL_Configuration" doc:name="Database">
             <db:dynamic-query><![CDATA[select * from visitordetails where Model = '#[message.inboundProperties.'http.uri.params'.model]';]]></db:dynamic-query>
+
         </db:select>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <flow-ref name="Transform_message_flow" doc:name="Transform_message_flow"/>
