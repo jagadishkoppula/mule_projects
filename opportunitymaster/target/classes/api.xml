@@ -29,9 +29,9 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
-{
-	Phone: payload.Account.Phone
-}]]></dw:set-payload>
+payload map ((payload01 , indexOfPayload01) -> {
+	Phone: payload01.Account.Phone
+})]]></dw:set-payload>
         </dw:transform-message>
 
     </flow>
@@ -102,17 +102,17 @@ payload]]></dw:set-payload>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
-{
-	ID: payload.ID,
-	"Customer Name": payload.CustomerName,
-	Contact: payload.Contact,
-	Location: payload.Location,
-	Address: payload.Address,
-	CustomerAccount: payload.CustomerAccount,
-	"Billing details": payload."Billing details",
-	ProjectName: payload.ProjectName,
-	Sector: payload.Sector
-}]]></dw:set-payload>
+payload map ((payload01 , indexOfPayload01) -> {
+	Sector: payload01.Sector,
+	"Billing details": payload01."Billing details",
+	Contact: payload01.Contact,
+	Address: payload01.Address,
+	CustomerAccount: payload01.CustomerAccount,
+	Location: payload01.Location,
+	ProjectName: payload01.ProjectName,
+	CustomerName: payload01.CustomerName,
+	ID: payload01.ID
+})]]></dw:set-payload>
         </dw:transform-message>
 
     </flow>
