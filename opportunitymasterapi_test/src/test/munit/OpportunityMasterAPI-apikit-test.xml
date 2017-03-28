@@ -127,4 +127,7 @@ payload map ((payload01 , indexOfPayload01) -> {
     <munit:test name="OpportunityMasterAPI-apikit-test-OpportunityMasterAPI-mainTest" description="Test">
         <flow-ref name="OpportunityMasterAPI-main" doc:name="Flow-ref to OpportunityMasterAPI-main"/>
     </munit:test>
+    <munit:test name="OpportunityMasterAPI-apikit-test-OpportunityMasterAPI-mainTest1" description="Test">
+        <flow-ref name="OpportunityMasterAPI-main" doc:name="Flow-ref to OpportunityMasterAPI-main"/>
+    </munit:test>
 </mule>
