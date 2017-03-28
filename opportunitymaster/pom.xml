@@ -3,10 +3,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mycompany</groupId>
-	<artifactId>opportunitymaster</artifactId>
+	<artifactId>jagadishopportunitymaster</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>mule</packaging>
-	<name>Mule opportunitymaster Application</name>
+	<name>Mule jagadishopportunitymaster Application</name>
 
     <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
