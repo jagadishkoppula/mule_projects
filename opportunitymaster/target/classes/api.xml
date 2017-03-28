@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    <http:listener-config name="api-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="api-config" raml="api.raml" consoleEnabled="false" doc:name="Router"/>
+    <db:mysql-config name="MySQL_Configuration" host="localhost" port="3306" user="root" password="1234" database="newdatabase" doc:name="MySQL Configuration"/>
+    <sfdc:config name="Salesforce__Basic_Authentication" username="aswin.pk@pdcpoc.com" password="aswin@23" securityToken="Cm20205MxUw15kJJpBKjY7PqC" doc:name="Salesforce: Basic Authentication"/>
+    <flow name="api-main">
+        <http:listener config-ref="api-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="api-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="api-console">
+        <http:listener config-ref="api-httpListenerConfig" path="/console/*" doc:name="HTTP"/>
+        <apikit:console config-ref="api-config" doc:name="APIkit Console"/>
+    </flow>
+    <flow name="get:/CustomerPhones:api-config">
+        <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT account.phone FROM Opportunity" doc:name="Salesforce"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="41517b43-6209-4882-9708-253c10e2a6e0" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	Phone: payload.Account.Phone
+}]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+    <flow name="get:/OpportunityPricingByCloseDate:api-config">
+        <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT CloseDate,Name FROM Opportunity" doc:name="Salesforce"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="0ef70875-309f-4714-a39b-271fc3707ea7" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	Amount: payload01.Amount,
+	type: payload01.type,
+	CloseDate: payload01.CloseDate,
+	Name: payload01.Name
+})]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <scripting:component doc:name="JavaScript">
+            <scripting:script engine="JavaScript"><![CDATA[//*** parse and store payload to a variable **
+
+var a = JSON.parse(payload);
+
+//*** loop through the payload ***
+
+for(var i=0; i<a.length;i++){
+	if(a[i].CloseDate<"2016-01-01")//check if closeDate in 2016
+	a[i].Amount=200;
+	else
+	a[i].Amount=300;
+	}
+result = a;//return the modified payload ]]></scripting:script>
+        </scripting:component>
+        <json:json-to-object-transformer doc:name="JSON to Object"/>
+
+    </flow>
+    <flow name="get:/Opportunity/{Account}:api-config">
+        <scatter-gather doc:name="Scatter-Gather">
+            <processor-chain>
+                <db:select config-ref="MySQL_Configuration" doc:name="Database">
+                    <db:dynamic-query><![CDATA[SELECT * FROM customer WHERE CustomerAccount = '#[message.inboundProperties.'http.uri.params'.Account]';]]></db:dynamic-query>
+                </db:select>
+                <json:object-to-json-transformer doc:name="Object to JSON"/>
+            </processor-chain>
+            <processor-chain>
+                <sfdc:query config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT Name,StageName,CloseDate FROM Opportunity WHERE Account.name= '#[flowVars.Account]'" doc:name="Salesforce"/>
+                <json:object-to-json-transformer doc:name="Object to JSON"/>
+            </processor-chain>
+        </scatter-gather>
+        <dw:transform-message metadata:id="6dabc716-81c6-44e1-8b51-d0617d82b555" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+
+    <flow name="get:/CustomerProject/{location}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Database">
+            <db:dynamic-query><![CDATA[SELECT * FROM customer WHERE Location = '#[message.inboundProperties.'http.uri.params'.location]';]]></db:dynamic-query>
+        </db:select>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="5fc51f3f-ce47-4fe7-9d42-9a0016413a56" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	ID: payload.ID,
+	"Customer Name": payload.CustomerName,
+	Contact: payload.Contact,
+	Location: payload.Location,
+	Address: payload.Address,
+	CustomerAccount: payload.CustomerAccount,
+	"Billing details": payload."Billing details",
+	ProjectName: payload.ProjectName,
+	Sector: payload.Sector
+}]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+    <flow name="get:/OpportunityByLocation/{eventlocation}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Database">
+            <db:dynamic-query><![CDATA[select * from visitordetails where Location = '#[message.inboundProperties.'http.uri.params'.eventlocation]';]]></db:dynamic-query>
+        </db:select>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="21ef3ef2-efb0-4e90-8490-3468a2ebd790" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	phone: payload01.phone,
+	Visitor_Name: payload01.Visitor_Name,
+	Model: payload01.Model,
+	Location: payload01.Location,
+	Device_ID: payload01.Device_ID,
+	ID: payload01.ID,
+	Visit_Date: payload01.Visit_Date
+})]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="get:/OpportunityByModel/{model}:api-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="Database">
+            <db:dynamic-query><![CDATA[select * from visitordetails where Model = '#[message.inboundProperties.'http.uri.params'.model]';]]></db:dynamic-query>
+        </db:select>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="5f95347f-8757-444d-a5ef-367813a5c085" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	phone: payload01.phone,
+	Visitor_Name: payload01.Visitor_Name,
+	Model: payload01.Model,
+	Location: payload01.Location,
+	Device_ID: payload01.Device_ID,
+	ID: payload01.ID,
+	Visit_Date: payload01.Visit_Date
+})]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+    <flow name="get:/CustomerDetailsByPhone/{phone}:api-config">
+        <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT Name,Description,account.phone,Amount,stagename FROM Opportunity WHERE account.phone = '#[flowVars.phone]'" doc:name="Salesforce"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="b7435cbe-2e9a-4203-8a61-2749ff7e8b3a" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	Phone: payload01.Account.Phone,
+	Model: payload01.Description,
+	Amount: payload01.Amount,
+	type: payload01.type,
+	Name: payload01.Name,
+	StageName: payload01.StageName
+})]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+    <flow name="get:/OpportunityDetails/{stage}:api-config">
+        <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT AccountId,CloseDate,Description,Id,Name,OwnerId,StageName,Type FROM Opportunity WHERE StageName = '#[flowVars.stage]'" doc:name="Salesforce"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="759c6eb6-5cc3-442b-96a6-72988d725d6d" doc:name="Transform Message">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	Type: payload01.Type,
+	AccountId: payload01.AccountId,
+	Description: payload01.Description,
+	OwnerId: payload01.OwnerId,
+	StageName: payload01.StageName,
+	Id: payload01.Id,
+	type: payload01.type,
+	CloseDate: payload01.CloseDate,
+	Name: payload01.Name
+})]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+    <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

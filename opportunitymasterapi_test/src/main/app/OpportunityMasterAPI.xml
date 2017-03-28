@@ -51,7 +51,7 @@ payload]]></dw:set-payload>
         </db:select>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <dw:transform-message metadata:id="5e3db811-57f5-43c5-beea-8704ad1ca2fd" doc:name="Transform Message">
-            <dw:input-payload mimeType="application/json"/>
+            <dw:input-payload mimeType="application/json" doc:sample="sample_data\list_json_2.json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -73,7 +73,7 @@ payload map ((payload01 , indexOfPayload01) -> {
         <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT AccountId,CloseDate,Description,Id,Name,OwnerId,StageName,Type FROM Opportunity WHERE StageName = '#[flowVars.stage]'" doc:name="OpportunityDetailsFromSalesforce"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <dw:transform-message metadata:id="72aabb49-b1fd-4b1f-a9fe-cb3fb2290fa9" doc:name="Transform Message">
-            <dw:input-payload mimeType="application/json"/>
+            <dw:input-payload mimeType="application/json" doc:sample="sample_data\list_json_3.json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -133,7 +133,7 @@ payload map ((payload01 , indexOfPayload01) -> {
         <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT Name,Description,account.phone,Amount,stagename FROM Opportunity WHERE account.phone = '#[flowVars.phone]'" doc:name="Salesforce"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <dw:transform-message metadata:id="4ca2f127-02d7-4498-a42b-5dc0041134ba" doc:name="Transform Message">
-            <dw:input-payload mimeType="application/json"/>
+            <dw:input-payload mimeType="application/json" doc:sample="sample_data\list_json_4.json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -155,9 +155,10 @@ payload map ((payload01 , indexOfPayload01) -> {
     </flow>
     <flow name="get:/CustomerPhones:OpportunityMasterAPI-config">
         <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT account.phone FROM Opportunity" doc:name="Salesforce"/>
+
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <dw:transform-message metadata:id="30a6b9e4-943d-4bcc-9700-08e26b9452de" doc:name="Transform Message">
-            <dw:input-payload mimeType="application/json"/>
+            <dw:input-payload mimeType="application/json" doc:sample="sample_data\list_json_5.json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -170,7 +171,7 @@ payload map ((payload01 , indexOfPayload01) -> {
         <sfdc:query-all config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT CloseDate,Name FROM Opportunity" doc:name="Salesforce"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <dw:transform-message metadata:id="01dd9627-e1bd-4254-84aa-ecbb199cfa60" doc:name="Transform Message">
-            <dw:input-payload mimeType="application/json"/>
+            <dw:input-payload mimeType="application/json" doc:sample="sample_data\list_json_6.json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
