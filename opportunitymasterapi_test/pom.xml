@@ -28,7 +28,7 @@
 		    <configuration>
 		        <deploymentType>cloudhub</deploymentType>
 		        <muleVersion>3.8.1</muleVersion>               <!-- This is the runtime version as it appears on the CloudHub interface -->
-		        <username>jagadish95</username>
+		        <username>jagadishkoppula95</username>
 		        <password>J@gadish95</password>
 		        <environment>Production</environment>
 		    </configuration>
@@ -138,9 +138,6 @@
 		    <version>3.8.1</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.mule.modules/mule-module-json -->
-	
-		
 		<dependency>
         	<groupId>com.mulesoft.muleesb</groupId>
 			<artifactId>mule-core-ee</artifactId>
@@ -205,54 +202,47 @@
 			<version>${mule.version}</version>
 			<scope>test</scope>
 		</dependency>
-				<!-- https://mvnrepository.com/artifact/com.mulesoft.munit/mule-munit-support -->
-		<dependency>
-		    <groupId>com.mulesoft.munit</groupId>
-		    <artifactId>mule-munit-support</artifactId>
-		    <version>3.8.1</version>
-		</dependency>
-	
+	<dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.2</version>
+            <scope>provided</scope>
+        </dependency>
     <dependency>
-            <groupId>com.mulesoft.munit</groupId>
-            <artifactId>munit-runner</artifactId>
-            <version>${munit.version}</version>
-            <scope>test</scope>
+            <groupId>com.mulesoft.weave</groupId>
+            <artifactId>mule-plugin-weave</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-db</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
         </dependency>
     <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-sfdc</artifactId>
             <version>7.1.2</version>
         </dependency>
+   		<dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-json</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    	<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+        
         <dependency>
 		    <groupId>org.mule.modules</groupId>
 		    <artifactId>mule-module-apikit</artifactId>
 		    <version>3.8.3</version>
 		</dependency>
-		<dependency>
-            <groupId>com.mulesoft.weave</groupId>
-            <artifactId>mule-plugin-weave</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-		        <!-- https://mvnrepository.com/artifact/org.mule.modules/mule-module-db -->
-		<!-- https://mvnrepository.com/artifact/org.mule.modules/mule-module-db -->
-		<dependency>
-		    <groupId>org.mule.modules</groupId>
-		    <artifactId>mule-module-db</artifactId>
-		    <version>3.8.1</version>
-		</dependency>
-
-		        
-    <dependency>
-            <groupId>org.mule.transports</groupId>
-            <artifactId>mule-transport-jdbc</artifactId>
-            <version>3.8.1</version>
-        </dependency>
-    <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.6</version>
-        </dependency>
+        
     </dependencies>
 
 	<repositories>
