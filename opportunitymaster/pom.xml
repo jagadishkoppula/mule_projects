@@ -191,13 +191,13 @@
             <artifactId>mule-module-sfdc</artifactId>
             <version>7.1.2</version>
         </dependency>
-    <dependency>
+   		<dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-json</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
-    <dependency>
+    	<dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.6</version>
